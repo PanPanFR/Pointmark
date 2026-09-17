@@ -5,7 +5,10 @@
   "description": "Point, annotate, copy element context for any AI agent.",
   "permissions": ["activeTab", "storage"],
   "action": {
-    "default_title": "Toggle element picker (Alt+A)"
+    "default_title": "Annotations panel (click) — picker: Alt+A"
+  },
+  "background": {
+    "service_worker": "background.js"
   },
   "commands": {
     "toggle-picker": {
@@ -15,7 +18,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
+      "matches": ["http://*/*", "https://*/*", "file:///*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }

@@ -269,6 +269,10 @@ export function renderPanel(s: PanelState): void {
   x.textContent = "×";
   x.onclick = () => s.onClose();
   const list = el("div", "wea-panel-list", p);
+  if (s.rows.length === 0) {
+    const empty = el("div", "wea-empty", list);
+    empty.textContent = "No annotations yet — press Alt+A and pick an element.";
+  }
   s.rows.forEach((row, i) => {
     const item = el("div", "wea-item", list);
     const cb = el("input", "", item) as HTMLInputElement;
@@ -284,9 +288,11 @@ export function renderPanel(s: PanelState): void {
     const acts = el("div", "wea-item-actions", item);
     const c = el("button", "wea-mini", acts);
     c.textContent = "Copy";
+    c.title = `Copy annotation ${i + 1}`;
     c.onclick = () => s.onCopyRow(row.id);
     const d = el("button", "wea-mini", acts);
     d.textContent = "Del";
+    d.title = `Delete annotation ${i + 1}`;
     d.onclick = () => s.onDeleteRow(row.id);
   });
   const foot = el("div", "wea-panel-foot", p);
