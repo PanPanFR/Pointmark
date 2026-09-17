@@ -1,6 +1,6 @@
 import { Annotation, MAX_ITEMS, STORAGE_KEY } from "../shared/types";
 
-type AddResult = { ok: true } | { ok: false; reason: "cap" | "quota" };
+type AddResult = { ok: true } | { ok: false; reason: "cap" | "quota" | "reload" };
 
 function area(): any | null {
   try {
@@ -27,26 +27,37 @@ export async function load(): Promise<Annotation[]> {
   }
 }
 
-async function persist(items: Annotation[]): Promise<boolean> {
+type PersistResult = { ok: true } | { ok: false; reason: "quota" | "reload" };
+
+// "reload" = extension context invalidated (tab dibuka sebelum extension
+// di-Reload/update; semua chrome.* di tab itu mati). Satu-satunya cara pulih: F5.
+function deadContext(): boolean {
+  try {
+    return typeof chrome === "undefined" || chrome?.runtime?.id === undefined;
+  } catch {
+    return true;
+  }
+}
+
+async function persist(items: Annotation[]): Promise<PersistResult> {
   const a = area();
   if (!a) {
     mem.items = items;
-    return true;
+    return { ok: true };
   }
   try {
     await a.set({ [STORAGE_KEY]: items });
-    if (chrome?.runtime?.lastError) return false;
-    return true;
+    return { ok: true };
   } catch {
-    return false;
+    return { ok: false, reason: deadContext() ? "reload" : "quota" };
   }
 }
 
 export async function add(item: Annotation): Promise<AddResult> {
   const cur = await load();
   if (cur.length >= MAX_ITEMS) return { ok: false, reason: "cap" };
-  const ok = await persist([...cur, item]);
-  return ok ? { ok: true } : { ok: false, reason: "quota" };
+  const res = await persist([...cur, item]);
+  return res.ok ? { ok: true } : res;
 }
 
 export async function remove(id: string): Promise<Annotation[]> {
