@@ -28,6 +28,9 @@ export interface PanelState {
   onLevel: (l: "compact" | "standard") => void;
   onClose: () => void;
   onPick: () => void;
+  minimized: boolean;
+  onMinimize: () => void;
+  onRestore: () => void;
 }
 
 let host: HTMLElement | null = null;
@@ -261,13 +264,26 @@ export function renderPanel(s: PanelState): void {
   const r = ensureRoot();
   r.querySelector('[data-wea="panel"]')?.remove();
   if (!s.open) return;
+  if (s.minimized) {
+    const pill = el("button", "wea-pill", r);
+    pill.dataset.wea = "panel";
+    pill.textContent = `\u25A3 Annotations (${s.rows.length})`;
+    pill.title = "Restore annotations panel";
+    pill.onclick = () => s.onRestore();
+    return;
+  }
   const p = el("div", "wea-panel", r);
   p.dataset.wea = "panel";
   const head = el("div", "wea-panel-head", p);
   const title = el("div", "", head);
   title.textContent = `Annotations (${s.rows.length})`;
+  const min = el("button", "wea-x", head);
+  min.textContent = "\u2013";
+  min.title = "Minimize panel";
+  min.onclick = () => s.onMinimize();
   const x = el("button", "wea-x", head);
   x.textContent = "×";
+  x.title = "Close panel";
   x.onclick = () => s.onClose();
   const list = el("div", "wea-panel-list", p);
   if (s.rows.length === 0) {
@@ -319,6 +335,60 @@ export function renderPanel(s: PanelState): void {
   const clr = el("button", "wea-btn wea-danger", btns);
   clr.textContent = "Clear";
   clr.onclick = () => s.onClear();
+
+  if (panelPos) {
+    p.style.left = panelPos.left;
+    p.style.top = panelPos.top;
+    p.style.width = panelPos.width;
+    p.style.height = panelPos.height;
+    p.style.right = "auto";
+    p.style.bottom = "auto";
+  }
+  makeDraggable(p, head);
+}
+
+// Panel position survives re-renders (in-memory, per page load).
+let panelPos: { left: string; top: string; width: string; height: string } | null = null;
+
+function makeDraggable(panel: HTMLElement, handle: HTMLElement): void {
+  handle.addEventListener("pointerdown", (e) => {
+    if ((e.target as Element).closest?.("button")) return;
+    e.preventDefault();
+    const rect = panel.getBoundingClientRect();
+    if (panel.style.left === "") {
+      panel.style.left = `${rect.left}px`;
+      panel.style.top = `${rect.top}px`;
+      panel.style.width = `${rect.width}px`;
+      panel.style.height = `${rect.height}px`;
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+    }
+    const dx = e.clientX - rect.left;
+    const dy = e.clientY - rect.top;
+    try {
+      handle.setPointerCapture(e.pointerId);
+    } catch {
+      /* ignore */
+    }
+    const move = (m: PointerEvent): void => {
+      const nx = Math.max(0, Math.min(m.clientX - dx, window.innerWidth - 80));
+      const ny = Math.max(0, Math.min(m.clientY - dy, window.innerHeight - 40));
+      panel.style.left = `${nx}px`;
+      panel.style.top = `${ny}px`;
+    };
+    const up = (): void => {
+      handle.removeEventListener("pointermove", move);
+      panelPos = {
+        left: panel.style.left,
+        top: panel.style.top,
+        width: panel.style.width,
+        height: panel.style.height,
+      };
+    };
+    handle.addEventListener("pointermove", move);
+    handle.addEventListener("pointerup", up, { once: true });
+    handle.addEventListener("pointercancel", up, { once: true });
+  });
 }
 
 // ---------- markers ----------

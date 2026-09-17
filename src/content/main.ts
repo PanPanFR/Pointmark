@@ -25,6 +25,7 @@ if (!(globalThis as any).__wea_loaded) {
   let mode: Mode = "idle";
   let level: "compact" | "standard" = "compact";
   let panelOpen = false;
+  let panelMinimized = false;
   let pending: Annotation | null = null;
   let pendingTarget: Element | null = null;
   const checked = new Set<string>();
@@ -42,6 +43,15 @@ if (!(globalThis as any).__wea_loaded) {
     for (const a of rows) if (!checked.has(a.id)) checked.add(a.id);
     renderPanel({
       open: panelOpen,
+      minimized: panelMinimized,
+      onMinimize: () => {
+        panelMinimized = true;
+        void refreshPanel();
+      },
+      onRestore: () => {
+        panelMinimized = false;
+        void refreshPanel();
+      },
       rows: rows.map((a) => ({
         id: a.id,
         label: shortLabel(a),
@@ -66,6 +76,7 @@ if (!(globalThis as any).__wea_loaded) {
       },
       onClose: () => {
         panelOpen = false;
+        panelMinimized = false;
         void refreshPanel();
       },
     });
@@ -176,6 +187,7 @@ if (!(globalThis as any).__wea_loaded) {
     pending = null;
     hideComposer();
     panelOpen = true;
+    panelMinimized = false;
     await refreshPanel();
     toast("added to list");
     startPicking(); // keep annotating
@@ -210,6 +222,7 @@ if (!(globalThis as any).__wea_loaded) {
     chrome?.runtime?.onMessage?.addListener((msg: any) => {
       if (msg?.type === "wea:toggle-panel") {
         panelOpen = !panelOpen;
+        if (panelOpen) panelMinimized = false;
         void refreshPanel();
       }
       if (msg?.type === "wea:toggle-picker") {
