@@ -37,7 +37,21 @@ jobs:
           cd dist
           zip -r "../pointmark-${GITHUB_REF_NAME}.zip" .
 
+      - name: Read release notes from CHANGELOG
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          heading="## $version"
+          awk -v heading="$heading" '
+            index($0, heading) == 1 { found = 1; next }
+            found && substr($0, 1, 3) == "## " { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "::error::no section '$heading' in CHANGELOG.md — add one before tagging"
+            exit 1
+          fi
+
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" pointmark-*.zip --title "$GITHUB_REF_NAME" --generate-notes
+        run: gh release create "$GITHUB_REF_NAME" pointmark-*.zip --title "$GITHUB_REF_NAME" --notes-file release-notes.md

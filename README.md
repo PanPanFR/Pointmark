@@ -116,7 +116,7 @@ After changing `public/manifest.json` or `public/background.js`, run `npm run bu
 
 ## For the project owner: making a release
 
-1. Write what changed in [CHANGELOG.md](CHANGELOG.md).
+1. Write what changed in [CHANGELOG.md](CHANGELOG.md). That text becomes the release notes, so keep it short and clear.
 2. Raise the version number in `public/manifest.json` and `package.json` (use the same number in both).
 3. Commit, then add a tag and push it: `git tag v0.1.1 && git push origin main v0.1.1`.
 4. An automatic GitHub workflow builds the add-on, zips it, and publishes a release with the zip attached.
