@@ -59,6 +59,7 @@ if (!(globalThis as any).__wea_loaded) {
       onCopySelected: () => void copyList(true),
       onCopyAll: () => void copyList(false),
       onClear: () => void clearAll(),
+      onPick: () => startPicking(),
       onLevel: (l) => {
         level = l;
         void refreshPanel();
@@ -165,7 +166,9 @@ if (!(globalThis as any).__wea_loaded) {
     const item: Annotation = { ...pending, instruction, level };
     const res = await add(item);
     if (!res.ok) {
-      toast(res.reason === "cap" ? "list full (100) — delete some first" : "storage full", "warn");
+      if (res.reason === "cap") toast("list full (100) — delete some first", "warn");
+      else if (res.reason === "reload") toast("extension updated — refresh page (F5), then retry", "err");
+      else toast("storage full", "warn");
       return;
     }
     checked.add(item.id);
@@ -201,11 +204,17 @@ if (!(globalThis as any).__wea_loaded) {
   );
 
   // Toolbar icon click (via background worker) toggles the panel.
+  // Browser-level command (via background worker) toggles the picker —
+  // fires even on sites that swallow the Alt+A keydown.
   try {
     chrome?.runtime?.onMessage?.addListener((msg: any) => {
       if (msg?.type === "wea:toggle-panel") {
         panelOpen = !panelOpen;
         void refreshPanel();
+      }
+      if (msg?.type === "wea:toggle-picker") {
+        if (isPicking()) stopAll();
+        else startPicking();
       }
     });
   } catch {

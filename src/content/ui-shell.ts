@@ -27,6 +27,7 @@ export interface PanelState {
   onClear: () => void;
   onLevel: (l: "compact" | "standard") => void;
   onClose: () => void;
+  onPick: () => void;
 }
 
 let host: HTMLElement | null = null;
@@ -296,6 +297,10 @@ export function renderPanel(s: PanelState): void {
     d.onclick = () => s.onDeleteRow(row.id);
   });
   const foot = el("div", "wea-panel-foot", p);
+  const pick = el("button", "wea-btn wea-primary", foot);
+  pick.textContent = "+ Pick element";
+  pick.title = "Pick an element (Alt+A)";
+  pick.onclick = () => s.onPick();
   const tog = el("div", "wea-toggle", foot);
   for (const lv of ["compact", "standard"] as const) {
     const b = el("button", "wea-mini", tog);
