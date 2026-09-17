@@ -146,6 +146,33 @@
   padding: 10px 12px;
   background: var(--wea-mantle);
   font-weight: 600;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.wea-panel-head:active {
+  cursor: grabbing;
+}
+
+.wea-pill {
+  display: block;
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 2147483646;
+  cursor: pointer;
+  background: var(--wea-mantle);
+  color: var(--wea-text);
+  border: 1px solid var(--wea-lavender);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font: inherit;
+}
+
+.wea-pill:hover {
+  background: var(--wea-lavender);
+  color: var(--wea-crust);
 }
 
 .wea-panel-list {
