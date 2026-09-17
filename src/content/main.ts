@@ -60,7 +60,6 @@ if (!(globalThis as any).__wea_loaded) {
         snippet: a.instruction.slice(0, 60),
         checked: checked.has(a.id),
       })),
-      level,
       onToggle: (id, on) => {
         if (on) checked.add(id);
         else checked.delete(id);
@@ -76,10 +75,6 @@ if (!(globalThis as any).__wea_loaded) {
         else startPicking();
         void refreshPanel();
       },
-      onLevel: (l) => {
-        level = l;
-        void refreshPanel();
-      },
       onClose: () => {
         panelOpen = false;
         panelMinimized = false;
@@ -92,7 +87,7 @@ if (!(globalThis as any).__wea_loaded) {
     const rows = await load();
     const a = rows.find((x) => x.id === id);
     if (!a) return;
-    await place(await formatOne({ ...a, level }));
+    await place(formatOne(a));
   }
 
   async function copyList(selectedOnly: boolean): Promise<void> {
@@ -102,7 +97,7 @@ if (!(globalThis as any).__wea_loaded) {
       toast(selectedOnly ? "nothing selected" : "list is empty", "warn");
       return;
     }
-    await place(formatMany(list, level), list.length);
+    await place(formatMany(list), list.length);
   }
 
   async function place(text: string, count?: number): Promise<void> {
@@ -175,18 +170,19 @@ if (!(globalThis as any).__wea_loaded) {
     mode = "composing";
     const r = target.getBoundingClientRect();
     showComposer(shortLabel(pending), r.left, r.bottom, {
-      onAdd: (instruction) => void addPending(instruction),
-      onCopy: (instruction) => void copyPending(instruction),
+      onAdd: (instruction, lv) => void addPending(instruction, lv),
+      onCopy: (instruction, lv) => void copyPending(instruction, lv),
       onClose: () => {
         mode = "idle";
         pending = null;
       },
-    });
+    }, level);
   }
 
-  async function addPending(instruction: string): Promise<void> {
+  async function addPending(instruction: string, lv: "compact" | "standard"): Promise<void> {
     if (!pending) return;
-    const item: Annotation = { ...pending, instruction, level };
+    level = lv; // ingat pilihan terakhir user
+    const item: Annotation = { ...pending, instruction, level: lv };
     const res = await add(item);
     if (!res.ok) {
       if (res.reason === "cap") toast("list full (100) — delete some first", "warn");
@@ -208,9 +204,10 @@ if (!(globalThis as any).__wea_loaded) {
     startPicking(); // keep annotating
   }
 
-  async function copyPending(instruction: string): Promise<void> {
+  async function copyPending(instruction: string, lv: "compact" | "standard"): Promise<void> {
     if (!pending) return;
-    await place(formatOne({ ...pending, instruction, level }));
+    level = lv;
+    await place(formatOne({ ...pending, instruction, level: lv }));
     pending = null;
     hideComposer();
     mode = "idle";

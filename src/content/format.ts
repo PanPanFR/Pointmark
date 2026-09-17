@@ -52,12 +52,13 @@ export function formatOne(a: Annotation): string {
   ].join("\n");
 }
 
-export function formatMany(list: Annotation[], level: Level): string {
+export function formatMany(list: Annotation[]): string {
   if (list.length === 0) return "";
-  if (list.length === 1) return formatOne({ ...list[0], level });
+  if (list.length === 1) return formatOne(list[0]);
   const head = [`# Web Element Annotations`, ``, `Page: ${list[0].url}`, ``];
   list.forEach((a, i) => {
     const e = a.element;
+    const level = a.level;
     const fence = fenceFor(e.html.outer);
     head.push(`## Annotation ${i + 1}`, ``);
     if (a.url !== list[0].url) head.push(`Page: ${a.url}`, ``);
