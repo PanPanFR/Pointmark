@@ -1,5 +1,7 @@
 # Pointmark
 
+<img src="image/Pointmark.png" alt="Pointmark logo" width="140">
+
 Pointmark is a browser add-on for Chrome. It helps you tell an AI assistant what to change on a web page.
 
 Click a part of a page, type what you want changed, then copy a short description. Paste that text into ChatGPT, Claude, Cursor, or any other AI chat.

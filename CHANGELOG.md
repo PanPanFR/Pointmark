@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 - 2026-09-17
+
+### Changed
+
+- Added the Pointmark logo. The toolbar button and the add-on page now show a proper icon instead of a blank square.
+
 ## 0.1.0 - 2026-09-17
 
 ### Added

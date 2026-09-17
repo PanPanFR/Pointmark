@@ -1,11 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Pointmark",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Point, annotate, copy element context for any AI agent.",
   "permissions": ["activeTab", "storage"],
   "action": {
-    "default_title": "Pointmark — picker: Alt+A"
+    "default_title": "Pointmark — picker: Alt+A",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
   },
   "background": {
     "service_worker": "background.js"
@@ -24,6 +29,9 @@
     }
   ],
   "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   }
 }
