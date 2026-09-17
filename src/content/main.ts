@@ -200,5 +200,17 @@ if (!(globalThis as any).__wea_loaded) {
     true,
   );
 
+  // Toolbar icon click (via background worker) toggles the panel.
+  try {
+    chrome?.runtime?.onMessage?.addListener((msg: any) => {
+      if (msg?.type === "wea:toggle-panel") {
+        panelOpen = !panelOpen;
+        void refreshPanel();
+      }
+    });
+  } catch {
+    /* ignore */
+  }
+
   void refreshPanel();
 }
