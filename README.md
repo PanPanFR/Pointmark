@@ -1,41 +1,69 @@
 # Pointmark
 
-Point at any element on a page, annotate it, and copy structured context — selector, HTML, text, styles — as Markdown you can paste into any AI coding agent.
+Pointmark is a browser add-on for Chrome. It helps you tell an AI assistant what to change on a web page.
 
-Chrome extension (Manifest V3). Vanilla TypeScript + Vite, no runtime dependencies. Everything stays on your machine.
+Click a part of a page, type what you want changed, then copy a short description. Paste that text into ChatGPT, Claude, Cursor, or any other AI chat.
 
-## Features
+Everything stays in your browser. Nothing is uploaded.
 
-- **Element picker** — `Alt+A`, the toolbar icon, or the picker button in the panel
-- **Instruction per annotation** — say what should change, not just which element
-- **Two detail levels** — `compact` (selector, tag, text, HTML, parent) or `standard` (adds ancestors, nearest heading, computed styles, geometry, page title, XPath fallback)
-- **Annotation list** — check the rows you want, then copy one row, the selected rows, or everything
-- **On-page markers** — numbered badges stay on the elements you already annotated
-- **Local only** — annotations live in `chrome.storage.local` (max 100), nothing is sent anywhere
+## What it does
 
-## Install (users)
+- **Pick any element** — press `Alt+A`, then click the part of the page you mean.
+- **Write what should change** — for example "make this button full width".
+- **Choose how much detail to copy** — Short or Detailed.
+- **Keep a list** — tick the notes you want, copy one, copy the ticked ones, or copy all.
+- **See your notes on the page** — saved elements get a numbered marker.
+- **Works offline by design** — up to 100 notes, saved in your browser only.
 
-1. Open [Releases](../../releases) and download the latest `pointmark-vX.Y.Z.zip`
-2. Extract it to a folder you will keep — Chrome loads the extension from that folder, so do not delete it
-3. Go to `chrome://extensions`, turn on **Developer mode** (top right)
-4. Click **Load unpacked** and select the extracted folder (the one containing `manifest.json`)
-5. Pin Pointmark to the toolbar, then press `Alt+A` on any page
+## Install
 
-Details, updates, and troubleshooting: [docs/install.md](docs/install.md)
+Pointmark is not in the Chrome Web Store, so you install it by hand. It takes about two minutes.
 
-> There is no auto-update. To update, download the new zip, replace the folder contents, then click **Reload** on `chrome://extensions`.
+1. Open the [Releases](../../releases) page and download the newest `pointmark-vX.Y.Z.zip`.
+2. Unzip it into a folder you will keep. Chrome reads the add-on from that folder, so do not delete or move it.
+3. Open `chrome://extensions` in your browser.
+4. Turn on **Developer mode** (top right corner).
+5. Click **Load unpacked** and choose the folder from step 2. That button just means "install the folder I downloaded".
+6. Click the puzzle-piece icon in the toolbar and pin **Pointmark**.
+7. Open any website and press `Alt+A`.
 
-## Usage
+More help, updating, and common problems: [docs/install.md](docs/install.md).
 
-1. Press `Alt+A` (or click the toolbar icon → picker button) to start picking
-2. Move the mouse — the element under the cursor is highlighted
-3. Click it. The composer opens next to the element
-4. Type the instruction ("make this button full width"), pick a level, then **Add** to keep annotating or **Copy** to copy just this one
-5. The toolbar icon opens the list: check rows, **Copy selected** / **Copy all**, delete single rows or clear everything
+> Pointmark does not update itself. To get a new version, download the new zip, replace the files in the same folder, then click **Reload** on the `chrome://extensions` page. Your saved notes stay.
 
-Full walkthrough: [docs/usage.md](docs/usage.md)
+## How to use it
+
+1. Press `Alt+A`. The mouse turns into a picker, and elements get outlined as you move.
+2. Click the element you want to talk about. A small box opens next to it.
+3. Type what should change, pick Short or Detailed, then click **Add** or **Copy**.
+   - **Add** saves the note and lets you keep picking.
+   - **Copy** copies just this one note and does not save it.
+4. Click the Pointmark icon in the toolbar to see all your notes. You can tick rows, copy one row, copy the ticked rows, copy everything, delete a row, or clear the list.
+
+A longer walkthrough: [docs/usage.md](docs/usage.md).
+
+### Short or Detailed?
+
+| What gets copied | Short | Detailed |
+|---|---|---|
+| Page address | yes | yes |
+| The code that points to the element | yes | yes |
+| Type of element and its visible text | yes | yes |
+| The element's HTML | yes | yes |
+| Its parent HTML (shortened) | yes | yes |
+| Your instruction | yes | yes |
+| Surrounding elements | no | yes |
+| Nearest heading | no | yes |
+| Styles in use | no | yes |
+| Size and position on the page | no | yes |
+| Page title | no | yes |
+| Another way to find the element | no | yes |
+
+Use **Short** when naming the element is enough. Use **Detailed** for layout, spacing, or color requests.
 
 ### What the copied text looks like
+
+Clicking Copy puts a text block on your clipboard. It looks like this:
 
 ````md
 ## Web Element Annotation
@@ -59,36 +87,36 @@ Instruction:
 Make this button full width on mobile.
 ````
 
-The `standard` level adds the ancestor chain, nearest heading, computed styles, geometry, page title, and an XPath fallback.
+When you copy more than one note, they arrive together in one block, one after another.
 
-## Permissions and privacy
+## Permissions — why Pointmark asks for them
 
-| Permission | Why it is needed |
+| What it asks for | Why it is needed |
 |---|---|
-| `activeTab` | Send the toggle message when you click the toolbar icon |
-| `storage` | Save the annotation list locally |
-| `commands` | Register the `Alt+A` shortcut |
-| Content script on `http`, `https`, `file` | Draw the highlight, composer, markers, and panel on the page |
+| `activeTab` | Lets the toolbar button talk to the page you are on |
+| `storage` | Keeps your saved notes in your browser |
+| `commands` | Registers the `Alt+A` shortcut |
+| Access to pages you visit | Draws the outline, the small box, the markers, and the list on the page |
 
-Nothing is uploaded. No analytics, no network calls.
+Pointmark sends nothing anywhere. There is no tracking and no internet request.
 
-## Development
+## For developers
 
 ```sh
 npm install
-npm run dev      # Vite watch build into dist/
-npm run build    # type-check + production build into dist/
+npm run dev      # rebuilds dist/ while you work
+npm run build    # checks the code and builds dist/
 ```
 
-Then load `dist/` via **Load unpacked** (steps 3–4 above).
+Then install the `dist/` folder the same way as step 5 above.
 
-After changing `public/manifest.json` or `public/background.js`, run `npm run build` and click **Reload** on `chrome://extensions`.
+After changing `public/manifest.json` or `public/background.js`, run `npm run build` again and click **Reload** on the `chrome://extensions` page.
 
-## Releasing
+## For the project owner: making a release
 
-1. Update [CHANGELOG.md](CHANGELOG.md)
-2. Bump `version` in `public/manifest.json` and `package.json`
-3. Commit, then tag and push: `git tag v0.1.1 && git push origin v0.1.1`
-4. [.github/workflows/release.yml](.github/workflows/release.yml) builds, zips, and publishes a GitHub Release with `pointmark-v0.1.1.zip` attached
+1. Write what changed in [CHANGELOG.md](CHANGELOG.md).
+2. Raise the version number in `public/manifest.json` and `package.json` (use the same number in both).
+3. Commit, then add a tag and push it: `git tag v0.1.1 && git push origin main v0.1.1`.
+4. An automatic GitHub workflow builds the add-on, zips it, and publishes a release with the zip attached.
 
-Versions follow [Semantic Versioning](https://semver.org/); every user-visible change gets a [CHANGELOG](CHANGELOG.md) entry.
+Version numbers work as `major.minor.patch` ([Semantic Versioning](https://semver.org/)). Every change users can see gets a [CHANGELOG](CHANGELOG.md) line.

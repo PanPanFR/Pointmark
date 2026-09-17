@@ -4,12 +4,11 @@
 
 ### Added
 
-- Element picker toggled by `Alt+A`, the toolbar icon, or the picker button in the panel
-- Composer with a free-text instruction, `compact` / `standard` detail levels, and Add / Copy actions
-- Annotation list with per-row checkboxes, copy one row, copy selected, copy all, delete, and clear
-- Markdown formatter emitting selector, tag, text, outer HTML, parent HTML, and instruction — plus ancestor chain, nearest heading, computed styles, geometry, page title, and XPath fallback at `standard` level
-- Numbered on-page markers for elements already annotated
-- Local persistence in `chrome.storage.local` with a 100-annotation cap
-- Manual copy fallback when the page denies clipboard write access
-- Manifest V3 background service worker for toolbar clicks and the `toggle-picker` command, with `!` and `F5` badges for restricted pages and stale tabs
-- GitHub release workflow publishing a zip on every `v*` tag
+- Pick an element on a page with `Alt+A`, the toolbar icon, or the pick button in the list.
+- Write an instruction for the element you picked.
+- Choose how much detail to copy: Short or Detailed.
+- Copy one note, the ticked notes, or all notes.
+- See numbered markers on the elements you saved.
+- Save up to 100 notes in your browser. Nothing is uploaded.
+- Select the text and copy it by hand if a page blocks automatic copying.
+- Download the add-on as a zip file from GitHub Releases.

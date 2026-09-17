@@ -1,76 +1,78 @@
 # Using Pointmark
 
-Audience: people who have Pointmark installed (see [install.md](install.md)).
+This page explains everything Pointmark can do. It assumes you already installed it — see [install.md](install.md) if not.
 
-Pointmark turns "this element here" into text an AI agent can act on: a Markdown block with the selector, the HTML, and your instruction.
+Pointmark turns "this thing here" into text an AI assistant can act on: a short description with your instruction, ready to paste.
 
-## The picker
+## Picking an element
 
-Start picking in any of three ways:
+Start picking in any of these ways:
 
-- Press `Alt+A` on the page
-- Click the toolbar icon (opens the panel) → picker button
-- Use the browser shortcut command `Toggle element picker` (default `Alt+A`; remappable at `chrome://extensions/shortcuts`)
+- Press `Alt+A` on the page.
+- Click the Pointmark icon in the toolbar, then the pick button.
+- Use the browser shortcut `Toggle element picker` (it starts as `Alt+A`, and you can change it at `chrome://extensions/shortcuts`).
 
-While picking, the element under the cursor is outlined. Click it to open the composer. Press `Esc`, or toggle picking off, to stop.
+While picking, the element under the mouse is outlined. Click it to open the small box. Press `Esc`, or turn picking off, to stop.
 
-## The composer
+## The small box (composer)
 
-The composer opens next to the picked element.
+The box opens next to the element you picked.
 
 | Field | What it does |
 |---|---|
-| Instruction | Free text describing what should change. This is what your agent reads first. |
-| Level | `compact` or `standard` — how much element context to include |
-| Add | Saves the annotation, drops a numbered marker on the element, and immediately starts picking again so you can chain annotations |
-| Copy | Copies just this annotation to the clipboard without saving it to the list |
+| Instruction | Free text about what should change. This is the first thing your AI reads. |
+| Level | Short or Detailed — how much information about the element to include. |
+| Add | Saves the note, puts a numbered marker on the element, and starts picking again so you can keep going. |
+| Copy | Copies just this note and does not save it. |
 
-The level you pick becomes the default for the next annotation.
+The level you choose becomes the default for your next note.
 
-## Levels
+## Short or Detailed
 
-| Field | compact | standard |
+| What gets copied | Short | Detailed |
 |---|---|---|
-| Page URL | yes | yes |
-| CSS selector, tag, text | yes | yes |
-| Outer HTML | yes | yes |
-| Direct parent HTML (truncated) | yes | yes |
-| Instruction | yes | yes |
-| Ancestor chain | — | yes |
-| Nearest heading | — | yes |
-| Computed styles | — | yes |
-| Geometry (`x, y, width x height`) | — | yes |
-| Page title | — | yes |
-| XPath fallback | — | yes |
+| Page address | yes | yes |
+| The code that points to the element | yes | yes |
+| Type of element and its visible text | yes | yes |
+| The element's HTML | yes | yes |
+| Its parent HTML (shortened) | yes | yes |
+| Your instruction | yes | yes |
+| Surrounding elements | no | yes |
+| Nearest heading | no | yes |
+| Styles in use | no | yes |
+| Size and position on the page | no | yes |
+| Page title | no | yes |
+| Another way to find the element | no | yes |
 
-Use `compact` when the selector is enough. Use `standard` for layout, styling, or spacing requests, where computed values and geometry matter.
+Use **Short** when naming the element is enough. Use **Detailed** when you care about layout, spacing, or colors — the extra information shows what the page actually uses right now.
 
-## The annotation list
+## Your list of notes
 
-Click the toolbar icon to open the panel.
+Click the Pointmark icon in the toolbar to open the list.
 
-| Action | Result |
+| Action | What happens |
 |---|---|
-| Checkbox per row | Marks the row as selected for **Copy selected** |
-| Copy icon on a row | Copies only that annotation |
-| Delete icon on a row | Removes it and renumbers the on-page markers |
-| Copy selected | Copies the checked rows as one Markdown document |
-| Copy all | Copies every row, ignoring checkboxes |
-| Clear | Deletes the whole list |
-| Minimize | Shrinks the panel to a small bar |
-| Pick | Toggles picking on and off |
+| Tick box on a row | Marks the row for **Copy selected** |
+| Copy icon on a row | Copies only that note |
+| Delete icon on a row | Removes it and renumbers the markers on the page |
+| Copy selected | Copies the ticked rows as one block of text |
+| Copy all | Copies every row, whether ticked or not |
+| Clear | Deletes every note |
+| Minimize | Shrinks the list to a small bar |
+| Pick | Turns picking on and off |
 
-Copies go straight to the clipboard — paste them into your agent's chat, prompt box, or a file.
+Copies go straight to your clipboard. Paste them into your AI chat, or into a file you are working on.
 
-## Limits and storage
+## Limits and where notes live
 
-- Maximum 100 annotations; adding more is blocked with a "list full" warning.
-- Annotations are stored in `chrome.storage.local` for that browser profile. They are not synced across devices and never leave your machine.
-- Annotations are per browser profile, not per page: picking on a second page keeps the list from the first. The copied output labels each annotation with its own page URL.
+- Up to 100 notes. After that, Pointmark asks you to delete some first.
+- Notes are saved in your browser, in the profile you are using. They do not follow you to another computer or another browser.
+- Notes are not tied to a page: if you pick on a second website, the list still shows the notes from the first. Each note carries its own page address in the copied text.
+- Nothing leaves your computer. There is no account and no syncing.
 
-## What the output looks like
+## What the copied text looks like
 
-Single annotation (`compact`):
+One note, Short level:
 
 ````md
 ## Web Element Annotation
@@ -94,4 +96,4 @@ Instruction:
 Make this button full width on mobile.
 ````
 
-Multiple annotations are wrapped in one document with an `## Annotation N` heading per row, so a single paste carries the whole review.
+If you copy several notes, they come in one document, one note after another, each with its own heading. That way a single paste carries your whole review.
