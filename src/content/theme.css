@@ -1,0 +1,280 @@
+:host {
+  --wea-base: #1e1e2e;
+  --wea-mantle: #181825;
+  --wea-crust: #11111b;
+  --wea-text: #cdd6f4;
+  --wea-subtext: #a6adc8;
+  --wea-blue: #89b4fa;
+  --wea-lavender: #b4befe;
+  --wea-mauve: #cba6f7;
+  --wea-green: #a6e3a1;
+  --wea-yellow: #f9e2af;
+  --wea-red: #f38ba8;
+}
+
+.wea {
+  all: initial;
+  font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--wea-text);
+}
+
+.wea-tip {
+  position: fixed;
+  z-index: 2147483647;
+  pointer-events: none;
+  background: var(--wea-crust);
+  color: var(--wea-lavender);
+  border: 1px solid var(--wea-blue);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.wea-card {
+  position: fixed;
+  z-index: 2147483647;
+  width: 300px;
+  background: var(--wea-base);
+  border: 1px solid var(--wea-blue);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  padding: 10px 12px;
+}
+
+.wea-label {
+  color: var(--wea-lavender);
+  font-size: 12px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wea-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 64px;
+  resize: vertical;
+  background: var(--wea-mantle);
+  color: var(--wea-text);
+  border: 1px solid var(--wea-blue);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font: inherit;
+}
+
+.wea-input:focus {
+  outline: 2px solid var(--wea-lavender);
+  outline-offset: 1px;
+}
+
+.wea-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.wea-btn {
+  flex: 1;
+  cursor: pointer;
+  background: var(--wea-mantle);
+  color: var(--wea-text);
+  border: 1px solid var(--wea-blue);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font: inherit;
+}
+
+.wea-btn:hover {
+  background: var(--wea-blue);
+  color: var(--wea-crust);
+}
+
+.wea-btn.wea-primary {
+  background: var(--wea-blue);
+  color: var(--wea-crust);
+}
+
+.wea-btn.wea-primary:hover {
+  background: var(--wea-lavender);
+}
+
+.wea-btn.wea-danger {
+  border-color: var(--wea-red);
+}
+
+.wea-btn.wea-danger:hover {
+  background: var(--wea-red);
+}
+
+.wea-x {
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--wea-subtext);
+  font-size: 14px;
+  padding: 0 4px;
+}
+
+.wea-x:hover {
+  color: var(--wea-red);
+}
+
+.wea-panel {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  width: min(360px, 90vw);
+  z-index: 2147483646;
+  display: flex;
+  flex-direction: column;
+  background: var(--wea-base);
+  border: 1px solid var(--wea-lavender);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.wea-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--wea-mantle);
+  font-weight: 600;
+}
+
+.wea-panel-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.wea-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  background: var(--wea-mantle);
+}
+
+.wea-item input[type="checkbox"] {
+  all: revert;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--wea-blue);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.wea-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.wea-item-label {
+  color: var(--wea-lavender);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wea-item-snippet {
+  color: var(--wea-subtext);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wea-item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.wea-mini {
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--wea-blue);
+  color: var(--wea-text);
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
+.wea-mini:hover {
+  background: var(--wea-blue);
+  color: var(--wea-crust);
+}
+
+.wea-panel-foot {
+  padding: 10px 12px;
+  background: var(--wea-mantle);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wea-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.wea-toggle .wea-mini[aria-pressed="true"] {
+  background: var(--wea-blue);
+  color: var(--wea-crust);
+}
+
+.wea-toasts {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.wea-toast {
+  background: var(--wea-crust);
+  border: 1px solid var(--wea-green);
+  color: var(--wea-text);
+  border-radius: 8px;
+  padding: 8px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.wea-toast.wea-warn {
+  border-color: var(--wea-yellow);
+}
+
+.wea-toast.wea-err {
+  border-color: var(--wea-red);
+}
+
+.wea-dot {
+  position: fixed;
+  z-index: 2147483645;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--wea-lavender);
+  box-shadow: 0 0 0 2px var(--wea-crust);
+  pointer-events: none;
+}
+
+.wea-manual {
+  width: min(480px, 90vw);
+}
+
+.wea-manual .wea-input {
+  min-height: 160px;
+}
