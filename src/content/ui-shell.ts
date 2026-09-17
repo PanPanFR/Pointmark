@@ -86,7 +86,10 @@ export function showManualCopy(text: string, onClose: () => void): void {
   hideComposer();
   const card = el("div", "wea-card wea-manual", r);
   card.dataset.wea = "manual";
-  const x = el("button", "wea-x", card);
+  const head = el("div", "wea-c-head", card);
+  const title = el("div", "wea-label", head);
+  title.textContent = "Copy manually (Ctrl+C)";
+  const x = el("button", "wea-x", head);
   x.textContent = "×";
   x.onclick = () => { card.remove(); onClose(); };
   const ta = el("textarea", "wea-input", card) as HTMLTextAreaElement;
@@ -216,24 +219,22 @@ export function showComposer(
   let lv: OutputLevel = initial;
   const card = el("div", "wea-card", r);
   card.dataset.wea = "composer";
-  const w = 324;
-  const h = 220;
+  const w = 344;
+  const h = 286;
   card.style.left = `${Math.max(8, Math.min(x, window.innerWidth - w))}px`;
   card.style.top = y + h > window.innerHeight
     ? `${Math.max(8, y - h)}px`
     : `${y + 12}px`;
-  const top = el("div", "wea-row", card);
-  (top as HTMLElement).style.marginTop = "0";
-  (top as HTMLElement).style.alignItems = "center";
-  const lab = el("div", "wea-label", top);
-  (lab as HTMLElement).style.flex = "1";
-  (lab as HTMLElement).style.marginBottom = "0";
+  const head = el("div", "wea-c-head", card);
+  const lab = el("div", "wea-label", head);
   lab.textContent = title;
   lab.title = title;
-  const xBtn = el("button", "wea-x", top);
+  const xBtn = el("button", "wea-x", head);
   xBtn.textContent = "×";
+  xBtn.title = "Close (Esc)";
   xBtn.onclick = () => { hideComposer(); cb.onClose(); };
-  const ta = el("textarea", "wea-input", card) as HTMLTextAreaElement;
+  const body = el("div", "wea-c-body", card);
+  const ta = el("textarea", "wea-input", body) as HTMLTextAreaElement;
   ta.placeholder = "Describe the change or ask about this element...";
   ta.onkeydown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
@@ -247,17 +248,13 @@ export function showComposer(
       cb.onClose();
     }
   };
-  const row = el("div", "wea-row", card);
-  const add = el("button", "wea-btn", row);
-  add.textContent = "+ Add to list";
-  add.title = "Add to list (Alt+Enter)";
-  add.onclick = () => cb.onAdd(ta.value, lv);
-  const copy = el("button", "wea-btn wea-primary", row);
-  copy.textContent = "Copy";
-  copy.title = "Copy now (Ctrl+Enter)";
-  copy.onclick = () => cb.onCopy(ta.value, lv);
-  const tog = el("div", "wea-toggle", card);
+  const opts = el("div", "wea-c-opts", card);
+  const optsTop = el("div", "wea-c-opts-top", opts);
+  const outLabel = el("span", "wea-c-outlabel", optsTop);
+  outLabel.textContent = "Output";
+  const tog = el("div", "wea-toggle", optsTop);
   const lvBtns: Record<OutputLevel, HTMLButtonElement> = {} as Record<OutputLevel, HTMLButtonElement>;
+  const hint = el("div", "wea-hint", opts);
   for (const o of ["compact", "standard"] as const) {
     const b = el("button", "wea-mini", tog);
     b.textContent = o[0].toUpperCase() + o.slice(1);
@@ -275,11 +272,20 @@ export function showComposer(
     };
     lvBtns[o] = b;
   }
-  const hint = el("div", "wea-hint", card);
   hint.textContent = lv === "compact"
     ? "Short: selector + text + HTML."
     : "Full: + context, styles & position.";
-  const keys = el("div", "wea-hint", card);
+  const foot = el("div", "wea-c-foot", card);
+  const row = el("div", "wea-row", foot);
+  const add = el("button", "wea-btn", row);
+  add.textContent = "+ Add to list";
+  add.title = "Add to list (Alt+Enter)";
+  add.onclick = () => cb.onAdd(ta.value, lv);
+  const copy = el("button", "wea-btn wea-primary", row);
+  copy.textContent = "Copy";
+  copy.title = "Copy now (Ctrl+Enter)";
+  copy.onclick = () => cb.onCopy(ta.value, lv);
+  const keys = el("div", "wea-hint", foot);
   keys.textContent = "Ctrl+Enter = Copy · Alt+Enter = Add · Esc = close";
   ta.focus();
 }

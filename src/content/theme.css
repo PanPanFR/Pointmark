@@ -34,12 +34,69 @@
 .wea-card {
   position: fixed;
   z-index: 2147483647;
-  width: 300px;
+  width: 344px;
+  box-sizing: border-box;
   background: var(--wea-base);
   border: 1px solid var(--wea-blue);
   border-radius: 10px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+/* composer sections: each owns its padding + border, so nothing is cramped */
+.wea-c-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 12px;
+  background: var(--wea-mantle);
+  border-bottom: 1px solid rgba(137, 180, 250, 0.25);
+}
+
+.wea-c-head .wea-label {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.wea-c-body {
+  display: block;
+  padding: 12px;
+}
+
+.wea-c-opts {
+  display: block;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(137, 180, 250, 0.15);
+  background: var(--wea-mantle);
+}
+
+.wea-c-opts-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.wea-c-outlabel {
+  display: inline;
+  color: var(--wea-subtext);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wea-c-foot {
+  display: block;
+  padding: 12px;
+  border-top: 1px solid rgba(137, 180, 250, 0.25);
+  background: var(--wea-mantle);
+}
+
+.wea-c-foot .wea-hint {
+  margin-top: 8px;
+  text-align: center;
 }
 
 .wea-label {
@@ -56,14 +113,19 @@
   display: block;
   width: 100%;
   box-sizing: border-box;
-  min-height: 64px;
+  min-height: 76px;
   resize: vertical;
   background: var(--wea-mantle);
   color: var(--wea-text);
-  border: 1px solid var(--wea-blue);
+  border: 1px solid rgba(137, 180, 250, 0.45);
   border-radius: 6px;
-  padding: 6px 8px;
-  font: 13px/1.45 "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  padding: 8px 10px;
+  font: 13px/1.5 "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+.wea-input::placeholder {
+  color: var(--wea-subtext);
+  opacity: 0.7;
 }
 
 .wea-input:focus {
@@ -77,14 +139,19 @@
   margin-top: 8px;
 }
 
+.wea-c-body .wea-row,
+.wea-c-foot .wea-row {
+  margin-top: 0;
+}
+
 .wea-btn {
   flex: 1;
   cursor: pointer;
-  background: var(--wea-mantle);
+  background: var(--wea-base);
   color: var(--wea-text);
   border: 1px solid var(--wea-blue);
   border-radius: 6px;
-  padding: 6px 10px;
+  padding: 8px 12px;
   font: 13px/1.45 "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
@@ -161,6 +228,7 @@
   cursor: grab;
   user-select: none;
   touch-action: none;
+  border-bottom: 1px solid rgba(180, 190, 254, 0.25);
 }
 
 .wea-panel-head:active {
@@ -193,7 +261,20 @@
   display: block;
   flex: 1;
   overflow-y: auto;
-  padding: 8px;
+  padding: 10px;
+}
+
+.wea-panel-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.wea-panel-list::-webkit-scrollbar-thumb {
+  background: rgba(137, 180, 250, 0.35);
+  border-radius: 4px;
+}
+
+.wea-panel-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(137, 180, 250, 0.6);
 }
 
 .wea-item {
@@ -202,8 +283,9 @@
   align-items: flex-start;
   padding: 8px;
   border-radius: 6px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   background: var(--wea-mantle);
+  border: 1px solid rgba(137, 180, 250, 0.2);
 }
 
 .wea-item input[type="checkbox"] {
@@ -280,6 +362,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  border-top: 1px solid rgba(180, 190, 254, 0.25);
 }
 
 .wea-toggle {
@@ -343,8 +426,10 @@
 
 .wea-manual {
   width: min(480px, 90vw);
+  padding: 12px;
 }
 
 .wea-manual .wea-input {
   min-height: 160px;
+  margin-top: 8px;
 }
