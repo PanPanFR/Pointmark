@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Web Element Annotator",
+  "version": "0.1.0",
+  "description": "Point, annotate, copy element context for any AI agent.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "action": {
+    "default_title": "Toggle element picker (Alt+A)"
+  },
+  "commands": {
+    "toggle-picker": {
+      "suggested_key": { "default": "Alt+A" },
+      "description": "Toggle element picker"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "128": "icons/icon128.png"
+  }
+}

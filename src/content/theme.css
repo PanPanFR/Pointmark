@@ -1,0 +1,13 @@
+:host {
+  --wea-base: #1e1e2e;
+  --wea-mantle: #181825;
+  --wea-crust: #11111b;
+  --wea-text: #cdd6f4;
+  --wea-subtext: #a6adc8;
+  --wea-blue: #89b4fa;
+  --wea-lavender: #b4befe;
+  --wea-mauve: #cba6f7;
+  --wea-green: #a6e3a1;
+  --wea-yellow: #f9e2af;
+  --wea-red: #f38ba8;
+}
