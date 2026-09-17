@@ -97,7 +97,10 @@ export function showManualCopy(text: string, onClose: () => void): void {
 export function toast(msg: string, kind: ToastKind = "ok"): void {
   const r = ensureRoot();
   let box = r.querySelector(".wea-toasts") as HTMLElement | null;
-  if (!box) box = el("div", "wea-toasts", r);
+  if (!box) {
+    box = el("div", "wea-toasts", r);
+    box.style.pointerEvents = "none";
+  }
   const t = el("div", `wea-toast${kind === "warn" ? " wea-warn" : kind === "err" ? " wea-err" : ""}`, box);
   t.textContent = msg;
   setTimeout(() => t.remove(), 2600);
@@ -144,6 +147,7 @@ function onOver(e: Event): void {
   h.style.outlineOffset = "2px";
   const r = ensureRoot();
   tip = el("div", "wea-tip", r);
+  tip.style.pointerEvents = "none";
   const rect = t.getBoundingClientRect();
   tip.textContent = `${label(t)}  ${Math.round(rect.width)}×${Math.round(rect.height)}`;
   const me = e as MouseEvent;
@@ -157,7 +161,7 @@ function onClick(e: Event): void {
   if (!t || t === host || host?.contains(t)) return;
   e.preventDefault();
   e.stopPropagation();
-  const found = (hoverEl && hoverEl instanceof Element ? hoverEl : t instanceof Element ? t : null);
+  const found = t instanceof Element ? t : hoverEl instanceof Element ? hoverEl : null;
   const cb = pickCb;
   exitPicker();
   if (found && cb) cb(found);

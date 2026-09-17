@@ -33,8 +33,8 @@ const collapse = (s: string): string => s.replace(/\s+/g, " ").trim();
 
 function fmtNode(el: Element): string {
   const tag = el.tagName.toLowerCase();
-  const id = (el as HTMLElement).id ? `#${(el as HTMLElement).id}` : "";
-  const cls = [...el.classList].slice(0, 3).map((c) => `.${c}`).join("");
+  const id = (el as HTMLElement).id ? `#${esc((el as HTMLElement).id)}` : "";
+  const cls = [...el.classList].slice(0, 3).map((c) => `.${esc(c)}`).join("");
   return `${tag}${id}${cls}`;
 }
 
@@ -50,7 +50,10 @@ function buildSelector(el: Element): string {
   const htmlEl = el as HTMLElement;
   if (htmlEl.id && unique(`#${esc(htmlEl.id)}`)) return `#${esc(htmlEl.id)}`;
   const testid = el.getAttribute("data-testid");
-  if (testid && unique(`[data-testid="${testid}"]`)) return `[data-testid="${testid}"]`;
+  if (testid) {
+    const q = testid.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+    if (unique(`[data-testid="${q}"]`)) return `[data-testid="${q}"]`;
+  }
 
   const classes = [...el.classList].slice(0, 3);
   for (let n = 1; n <= classes.length; n++) {
@@ -120,17 +123,20 @@ function nearestHeading(el: Element): string | undefined {
 
 export function collectElement(el: Element): El {
   const tag = el.tagName.toLowerCase();
-  if (["script", "style", "noscript"].includes(tag)) {
+  if (["script", "style", "noscript", "canvas"].includes(tag)) {
     throw new Error(`[wea] cannot annotate <${tag}>`);
   }
   const htmlEl = el as HTMLElement & { type?: string; value?: string };
-  const isPassword = (htmlEl.type ?? el.getAttribute("type")) === "password";
+  const typeAttr = String(htmlEl.type ?? el.getAttribute("type") ?? "").toLowerCase();
+  const isSensitive =
+    typeAttr === "password" ||
+    (el.getAttribute("autocomplete") ?? "").toLowerCase().startsWith("cc-");
 
   const id = htmlEl.id || undefined;
   const classes = [...el.classList].slice(0, CLASS_CAP);
 
   const aria = el.getAttribute("aria-label")?.trim();
-  const rawText = isPassword ? "[redacted]" : aria || collapse(el.textContent ?? "");
+  const rawText = isSensitive ? "[redacted]" : aria || collapse(el.textContent ?? "");
   const text = rawText ? trunc(rawText, TEXT_CAP) : undefined;
 
   const attributes: Record<string, string> = {};
@@ -139,7 +145,7 @@ export function collectElement(el: Element): El {
     const allowed =
       ATTR_ALLOW.has(low) || low.startsWith("aria-");
     if (!allowed || low === "style" || low.startsWith("on")) continue;
-    if (low === "value" && isPassword) {
+    if (low === "value" && isSensitive) {
       attributes[low] = "[redacted]";
       continue;
     }
@@ -149,9 +155,11 @@ export function collectElement(el: Element): El {
   const selector = buildSelector(el);
   const xpath = buildXPath(el);
 
-  const outer = trunc(el.outerHTML, OUTER_CAP);
+  const scrub = (h: string): string =>
+    isSensitive ? h.replace(/(\svalue\s*=\s*)("[^"]*"|'[^']*')/gi, '$1"[redacted]"') : h;
+  const outer = trunc(scrub(el.outerHTML), OUTER_CAP);
   const parent = el.parentElement
-    ? trunc(el.parentElement.outerHTML.slice(0, PARENT_CAP + 64), PARENT_CAP)
+    ? trunc(scrub(el.parentElement.outerHTML.slice(0, PARENT_CAP + 64)), PARENT_CAP)
     : undefined;
 
   const ancestors: string[] = [];

@@ -162,6 +162,15 @@
   background: var(--wea-mantle);
 }
 
+.wea-item input[type="checkbox"] {
+  all: revert;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--wea-blue);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 .wea-item-text {
   flex: 1;
   min-width: 0;
