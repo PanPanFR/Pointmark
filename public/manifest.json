@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Web Element Annotator",
+  "name": "Pointmark",
   "version": "0.1.0",
   "description": "Point, annotate, copy element context for any AI agent.",
   "permissions": ["activeTab", "storage"],
   "action": {
-    "default_title": "Annotations panel (click) — picker: Alt+A"
+    "default_title": "Pointmark — picker: Alt+A"
   },
   "background": {
     "service_worker": "background.js"
