@@ -63,7 +63,7 @@
   border: 1px solid var(--wea-blue);
   border-radius: 6px;
   padding: 6px 8px;
-  font: inherit;
+  font: 13px/1.45 "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 .wea-input:focus {
@@ -85,7 +85,7 @@
   border: 1px solid var(--wea-blue);
   border-radius: 6px;
   padding: 6px 10px;
-  font: inherit;
+  font: 13px/1.45 "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 .wea-btn:hover {
@@ -114,12 +114,20 @@
   cursor: pointer;
   background: none;
   border: none;
+  border-radius: 4px;
   color: var(--wea-subtext);
   font-size: 14px;
-  padding: 0 4px;
+  padding: 2px 6px;
+  margin-left: 6px;
 }
 
 .wea-x:hover {
+  background: rgba(137, 180, 250, 0.15);
+  color: var(--wea-lavender);
+}
+
+.wea-x:last-child:hover {
+  background: rgba(243, 138, 168, 0.15);
   color: var(--wea-red);
 }
 
@@ -171,7 +179,9 @@
   border: 1px solid var(--wea-lavender);
   border-radius: 8px;
   padding: 8px 12px;
-  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 .wea-pill:hover {

@@ -2,9 +2,11 @@ import cssText from "./theme.css?inline";
 
 export type ToastKind = "ok" | "warn" | "err";
 
+export type OutputLevel = "compact" | "standard";
+
 export interface ComposerCallbacks {
-  onAdd: (instruction: string) => void;
-  onCopy: (instruction: string) => void;
+  onAdd: (instruction: string, level: OutputLevel) => void;
+  onCopy: (instruction: string, level: OutputLevel) => void;
   onClose: () => void;
 }
 
@@ -18,14 +20,12 @@ export interface PanelRow {
 export interface PanelState {
   open: boolean;
   rows: PanelRow[];
-  level: "compact" | "standard";
   onToggle: (id: string, checked: boolean) => void;
   onCopyRow: (id: string) => void;
   onDeleteRow: (id: string) => void;
   onCopySelected: () => void;
   onCopyAll: () => void;
   onClear: () => void;
-  onLevel: (l: "compact" | "standard") => void;
   onClose: () => void;
   onPick: () => void;
   minimized: boolean;
@@ -209,10 +209,11 @@ export function exitPicker(): void {
 // ---------- composer ----------
 
 export function showComposer(
-  title: string, x: number, y: number, cb: ComposerCallbacks,
+  title: string, x: number, y: number, cb: ComposerCallbacks, initial: OutputLevel,
 ): void {
   const r = ensureRoot();
   hideComposer();
+  let lv: OutputLevel = initial;
   const card = el("div", "wea-card", r);
   card.dataset.wea = "composer";
   const w = 324;
@@ -236,9 +237,11 @@ export function showComposer(
   ta.placeholder = "Describe the change or ask about this element...";
   ta.onkeydown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-      cb.onCopy(ta.value);
-    }
-    if (e.key === "Escape") {
+      cb.onCopy(ta.value, lv);
+    } else if (e.altKey && e.key === "Enter") {
+      e.preventDefault();
+      cb.onAdd(ta.value, lv);
+    } else if (e.key === "Escape") {
       e.stopPropagation();
       hideComposer();
       cb.onClose();
@@ -247,12 +250,37 @@ export function showComposer(
   const row = el("div", "wea-row", card);
   const add = el("button", "wea-btn", row);
   add.textContent = "+ Add to list";
-  add.onclick = () => cb.onAdd(ta.value);
+  add.title = "Add to list (Alt+Enter)";
+  add.onclick = () => cb.onAdd(ta.value, lv);
   const copy = el("button", "wea-btn wea-primary", row);
   copy.textContent = "Copy";
-  copy.onclick = () => cb.onCopy(ta.value);
+  copy.title = "Copy now (Ctrl+Enter)";
+  copy.onclick = () => cb.onCopy(ta.value, lv);
+  const tog = el("div", "wea-toggle", card);
+  const lvBtns: Record<OutputLevel, HTMLButtonElement> = {} as Record<OutputLevel, HTMLButtonElement>;
+  for (const o of ["compact", "standard"] as const) {
+    const b = el("button", "wea-mini", tog);
+    b.textContent = o[0].toUpperCase() + o.slice(1);
+    b.title = o === "compact"
+      ? "Short output: selector, text, HTML. Hemat token."
+      : "Full output: + context, styles & position.";
+    b.setAttribute("aria-pressed", String(lv === o));
+    b.onclick = () => {
+      lv = o;
+      lvBtns.compact.setAttribute("aria-pressed", String(lv === "compact"));
+      lvBtns.standard.setAttribute("aria-pressed", String(lv === "standard"));
+      hint.textContent = lv === "compact"
+        ? "Short: selector + text + HTML."
+        : "Full: + context, styles & position.";
+    };
+    lvBtns[o] = b;
+  }
+  const hint = el("div", "wea-hint", card);
+  hint.textContent = lv === "compact"
+    ? "Short: selector + text + HTML."
+    : "Full: + context, styles & position.";
   const keys = el("div", "wea-hint", card);
-  keys.textContent = "Ctrl+Enter = Copy · Esc = close";
+  keys.textContent = "Ctrl+Enter = Copy · Alt+Enter = Add · Esc = close";
   ta.focus();
 }
 
@@ -321,20 +349,6 @@ export function renderPanel(s: PanelState): void {
   pick.title = s.picking ? "Stop picker (Esc)" : "Pick an element (Alt+A)";
   pick.setAttribute("aria-pressed", String(s.picking));
   pick.onclick = () => s.onPick();
-  const tog = el("div", "wea-toggle", foot);
-  for (const lv of ["compact", "standard"] as const) {
-    const b = el("button", "wea-mini", tog);
-    b.textContent = lv[0].toUpperCase() + lv.slice(1);
-    b.setAttribute("aria-pressed", String(s.level === lv));
-    b.title = lv === "compact"
-      ? "Short output: selector, text, HTML. Hemat token."
-      : "Full output: + context, styles & position.";
-    b.onclick = () => s.onLevel(lv);
-  }
-  const hint = el("div", "wea-hint", foot);
-  hint.textContent = s.level === "compact"
-    ? "Short: selector + text + HTML."
-    : "Full: + context, styles & position.";
   const btns = el("div", "wea-row", foot);
   (btns as HTMLElement).style.marginTop = "0";
   const sel = el("button", "wea-btn", btns);
