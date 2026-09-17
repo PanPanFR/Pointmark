@@ -14,7 +14,7 @@
 
 .wea {
   all: initial;
-  font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font: 13px/1.45 "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   color: var(--wea-text);
 }
 
@@ -139,6 +139,10 @@
   overflow: hidden;
 }
 
+.wea-panel-head > div {
+  flex: 1;
+}
+
 .wea-panel-head {
   display: flex;
   align-items: center;
@@ -239,6 +243,12 @@
   font-size: 12px;
 }
 
+.wea-hint {
+  display: block;
+  color: var(--wea-subtext);
+  font-size: 11px;
+}
+
 .wea-mini {
   cursor: pointer;
   background: none;
@@ -267,7 +277,8 @@
   gap: 4px;
 }
 
-.wea-toggle .wea-mini[aria-pressed="true"] {
+.wea-toggle .wea-mini[aria-pressed="true"],
+.wea-btn[aria-pressed="true"] {
   background: var(--wea-blue);
   color: var(--wea-crust);
 }
@@ -305,10 +316,17 @@
 .wea-dot {
   position: fixed;
   z-index: 2147483645;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  display: block;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 8px;
+  padding: 0 4px;
   background: var(--wea-lavender);
+  color: var(--wea-crust);
+  font-size: 10px;
+  font-weight: 700;
   box-shadow: 0 0 0 2px var(--wea-crust);
   pointer-events: none;
 }

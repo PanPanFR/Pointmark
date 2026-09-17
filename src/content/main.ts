@@ -10,6 +10,7 @@ import {
   isPicking,
   removeMarker,
   renderPanel,
+  setMarkerLabel,
   showComposer,
   showManualCopy,
   toast,
@@ -44,6 +45,7 @@ if (!(globalThis as any).__wea_loaded) {
     renderPanel({
       open: panelOpen,
       minimized: panelMinimized,
+      picking: isPicking(),
       onMinimize: () => {
         panelMinimized = true;
         void refreshPanel();
@@ -69,7 +71,11 @@ if (!(globalThis as any).__wea_loaded) {
       onCopySelected: () => void copyList(true),
       onCopyAll: () => void copyList(false),
       onClear: () => void clearAll(),
-      onPick: () => startPicking(),
+      onPick: () => {
+        if (isPicking()) stopAll();
+        else startPicking();
+        void refreshPanel();
+      },
       onLevel: (l) => {
         level = l;
         void refreshPanel();
@@ -96,13 +102,14 @@ if (!(globalThis as any).__wea_loaded) {
       toast(selectedOnly ? "nothing selected" : "list is empty", "warn");
       return;
     }
-    await place(formatMany(list, level));
+    await place(formatMany(list, level), list.length);
   }
 
-  async function place(text: string): Promise<void> {
+  async function place(text: string, count?: number): Promise<void> {
     const ok = await copyText(text);
-    if (ok) toast("copied — paste to your agent");
-    else {
+    if (ok) {
+      toast(count ? `${count} annotation${count > 1 ? "s" : ""} copied — paste to your agent` : "copied — paste to your agent");
+    } else {
       toast("copy denied — select + Ctrl+C", "err");
       showManualCopy(text, () => undefined);
     }
@@ -112,6 +119,8 @@ if (!(globalThis as any).__wea_loaded) {
     await remove(id);
     checked.delete(id);
     removeMarker(id);
+    const rows = await load();
+    rows.forEach((a, i) => setMarkerLabel(a.id, i + 1));
     await refreshPanel();
   }
 
@@ -127,6 +136,7 @@ if (!(globalThis as any).__wea_loaded) {
     pending = null;
     mode = "picking";
     enterPicker(onPick, onCancel);
+    void refreshPanel();
   }
 
   function stopAll(): void {
@@ -134,11 +144,13 @@ if (!(globalThis as any).__wea_loaded) {
     hideComposer();
     pending = null;
     mode = "idle";
+    void refreshPanel();
   }
 
   function onCancel(): void {
     mode = "idle";
     pending = null;
+    void refreshPanel();
   }
 
   function onPick(target: Element): void {
@@ -183,7 +195,10 @@ if (!(globalThis as any).__wea_loaded) {
       return;
     }
     checked.add(item.id);
-    if (pendingTarget) addMarker(item.id, pendingTarget);
+    if (pendingTarget) {
+      const rows = await load();
+      addMarker(item.id, pendingTarget, rows.length);
+    }
     pending = null;
     hideComposer();
     panelOpen = true;

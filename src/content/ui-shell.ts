@@ -31,6 +31,7 @@ export interface PanelState {
   minimized: boolean;
   onMinimize: () => void;
   onRestore: () => void;
+  picking: boolean;
 }
 
 let host: HTMLElement | null = null;
@@ -250,6 +251,8 @@ export function showComposer(
   const copy = el("button", "wea-btn wea-primary", row);
   copy.textContent = "Copy";
   copy.onclick = () => cb.onCopy(ta.value);
+  const keys = el("div", "wea-hint", card);
+  keys.textContent = "Ctrl+Enter = Copy · Esc = close";
   ta.focus();
 }
 
@@ -314,16 +317,24 @@ export function renderPanel(s: PanelState): void {
   });
   const foot = el("div", "wea-panel-foot", p);
   const pick = el("button", "wea-btn wea-primary", foot);
-  pick.textContent = "+ Pick element";
-  pick.title = "Pick an element (Alt+A)";
+  pick.textContent = s.picking ? "\u25A0 Stop picking" : "+ Pick element";
+  pick.title = s.picking ? "Stop picker (Esc)" : "Pick an element (Alt+A)";
+  pick.setAttribute("aria-pressed", String(s.picking));
   pick.onclick = () => s.onPick();
   const tog = el("div", "wea-toggle", foot);
   for (const lv of ["compact", "standard"] as const) {
     const b = el("button", "wea-mini", tog);
     b.textContent = lv[0].toUpperCase() + lv.slice(1);
     b.setAttribute("aria-pressed", String(s.level === lv));
+    b.title = lv === "compact"
+      ? "Short output: selector, text, HTML. Hemat token."
+      : "Full output: + context, styles & position.";
     b.onclick = () => s.onLevel(lv);
   }
+  const hint = el("div", "wea-hint", foot);
+  hint.textContent = s.level === "compact"
+    ? "Short: selector + text + HTML."
+    : "Full: + context, styles & position.";
   const btns = el("div", "wea-row", foot);
   (btns as HTMLElement).style.marginTop = "0";
   const sel = el("button", "wea-btn", btns);
@@ -414,11 +425,12 @@ function syncMarkers(): void {
   }
 }
 
-export function addMarker(id: string, target: Element): void {
+export function addMarker(id: string, target: Element, n?: number): void {
   const r = ensureRoot();
   removeMarker(id);
   const dot = el("div", "wea-dot", r);
   (dot as HTMLElement).style.pointerEvents = "none";
+  if (n !== undefined) dot.textContent = String(n);
   markerEls.set(id, { target, dot });
   if (!markerSync) {
     window.addEventListener("scroll", syncMarkers, true);
@@ -431,6 +443,11 @@ export function addMarker(id: string, target: Element): void {
 export function removeMarker(id: string): void {
   markerEls.get(id)?.dot.remove();
   markerEls.delete(id);
+}
+
+export function setMarkerLabel(id: string, n: number): void {
+  const m = markerEls.get(id);
+  if (m) m.dot.textContent = String(n);
 }
 
 export function clearMarkers(): void {
